@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InterviewIQ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="app-card">
+        <div class="hero">
+          <span class="badge">InterviewIQ</span>
+          <h1>Turn your resume into interview-ready prep for a specific job.</h1>
+          <p>
+            Paste your resume and the target job description to get an ATS score, tailored
+            resume improvements, optimized positioning, interview questions, and prep guidance.
+          </p>
+        </div>
+
+        <form id="analyzer-form" class="generator-form">
+          <div class="textarea-grid">
+            <div class="field-group">
+              <label for="resume" class="label">Resume</label>
+              <textarea
+                id="resume"
+                name="resume"
+                placeholder="Paste the candidate's resume here..."
+                required
+              ></textarea>
+            </div>
+
+            <div class="field-group">
+              <label for="job" class="label">Job Description</label>
+              <textarea
+                id="job"
+                name="job"
+                placeholder="Paste the job description or posting text here..."
+                required
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button id="analyze-button" type="submit">Analyze Resume</button>
+          </div>
+        </form>
+
+        <div id="status" class="status" aria-live="polite"></div>
+
+        <section id="results" class="results hidden">
+          <article class="result-block">
+            <div class="section-head">
+              <h2>ATS Score</h2>
+            </div>
+            <div id="ats-output" class="score-box"></div>
+          </article>
+
+          <article class="result-block">
+            <div class="section-head">
+              <h2>Resume Feedback</h2>
+              <button class="copy-button" data-copy-target="feedback-output" type="button">Copy</button>
+            </div>
+            <div id="feedback-output" class="content-box"></div>
+          </article>
+
+          <article class="result-block">
+            <div class="section-head">
+              <h2>Optimized Resume</h2>
+              <button class="copy-button" data-copy-target="optimized-output" type="button">Copy</button>
+            </div>
+            <div id="optimized-output" class="content-box"></div>
+          </article>
+
+          <article class="result-block">
+            <div class="section-head">
+              <h2>Interview Questions</h2>
+              <button class="copy-button" data-copy-target="questions-output" type="button">Copy</button>
+            </div>
+            <div id="questions-output" class="content-box"></div>
+          </article>
+
+          <article class="result-block">
+            <div class="section-head">
+              <h2>Suggested Answers</h2>
+              <button class="copy-button" data-copy-target="answers-output" type="button">Copy</button>
+            </div>
+            <div id="answers-output" class="content-box"></div>
+          </article>
+
+          <article class="result-block">
+            <div class="section-head">
+              <h2>Skill Gaps</h2>
+              <button class="copy-button" data-copy-target="gaps-output" type="button">Copy</button>
+            </div>
+            <div id="gaps-output" class="content-box"></div>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
