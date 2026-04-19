@@ -13,98 +13,224 @@
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <main class="page-shell">
-      <section class="app-card">
-        <div class="hero">
-          <span class="badge">InterviewIQ</span>
-          <h1>Turn your resume into interview-ready prep for a specific job.</h1>
-          <p>
-            Paste your resume and the target job description to get an ATS score, tailored
-            resume improvements, optimized positioning, interview questions, and prep guidance.
-          </p>
-        </div>
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
-        <form id="analyzer-form" class="generator-form">
-          <div class="textarea-grid">
-            <div class="field-group">
-              <label for="resume" class="label">Resume</label>
-              <textarea
-                id="resume"
-                name="resume"
-                placeholder="Paste the candidate's resume here..."
-                required
-              ></textarea>
+    <main class="page-shell">
+      <section class="workspace-card">
+        <header class="workspace-header">
+          <div>
+            <span class="eyebrow">InterviewIQ</span>
+            <h1>See how your resume performs in real hiring systems — before you apply.</h1>
+            <p>
+              Upload a PDF or TXT resume or paste the resume manually, then evaluate it against a job
+              description using strict, evidence-based ATS and technical screening logic.
+            </p>
+          </div>
+          <button id="export-pdf-button" class="secondary-button" type="button" disabled>
+            Export as PDF
+          </button>
+        </header>
+
+        <section class="app-layout">
+          <aside class="panel panel-input">
+            <div class="panel-head">
+              <h2>Input</h2>
+              <p>Upload the candidate resume or paste it directly, then add the target job description.</p>
             </div>
 
-            <div class="field-group">
-              <label for="job" class="label">Job Description</label>
+            <form id="analyzer-form" class="analyzer-form">
+              <label class="field-label" for="resumeFile">Resume File</label>
+              <label class="upload-zone" for="resumeFile" id="upload-zone">
+                <input id="resumeFile" name="resumeFile" type="file" accept=".pdf,.txt,application/pdf,text/plain" />
+                <span class="upload-icon">+</span>
+                <strong>Choose PDF or TXT resume</strong>
+                <span class="upload-hint">Drag and drop is supported. Max file size: 5MB.</span>
+                <span id="file-name" class="file-name">No file selected</span>
+              </label>
+
+              <div class="divider">
+                <span>or paste resume text</span>
+              </div>
+
+              <label class="field-label" for="resumeText">Resume Text</label>
+              <textarea
+                id="resumeText"
+                name="resumeText"
+                class="resume-textarea"
+                placeholder="Paste the resume here if you don't want to upload a file..."
+              ></textarea>
+
+              <label class="field-label" for="job">Job Description</label>
               <textarea
                 id="job"
                 name="job"
-                placeholder="Paste the job description or posting text here..."
+                placeholder="Paste the full job description, hiring brief, or role requirements..."
                 required
               ></textarea>
+
+              <div class="action-row">
+                <button id="analyze-button" class="primary-button" type="submit">Analyze Resume</button>
+              </div>
+            </form>
+
+            <div id="status-banner" class="status-banner hidden" role="alert"></div>
+          </aside>
+
+          <section class="panel panel-output">
+            <div class="panel-head">
+              <h2>Output</h2>
+              <p>Strict ATS scoring, technical evidence review, keyword gaps, and hiring risk signals.</p>
             </div>
-          </div>
 
-          <div class="action-row">
-            <button id="analyze-button" type="submit">Analyze Resume</button>
-          </div>
-        </form>
-
-        <div id="status" class="status" aria-live="polite"></div>
-
-        <section id="results" class="results hidden">
-          <article class="result-block">
-            <div class="section-head">
-              <h2>ATS Score</h2>
+            <div id="loading-state" class="loading-state hidden" aria-live="polite">
+              <div class="spinner"></div>
+              <div>
+                <strong>Evaluating resume...</strong>
+                <p>Extracting content, matching against the job, and scoring evidence quality.</p>
+              </div>
             </div>
-            <div id="ats-output" class="score-box"></div>
-          </article>
 
-          <article class="result-block">
-            <div class="section-head">
-              <h2>Resume Feedback</h2>
-              <button class="copy-button" data-copy-target="feedback-output" type="button">Copy</button>
+            <div id="empty-state" class="empty-state">
+              <h3>Ready when you are</h3>
+              <p>
+                Upload a resume or paste one in, then add the job description to generate ATS scoring,
+                technical scoring, evidence mapping, keyword gaps, interview questions, mock interview grading,
+                and a final hiring decision.
+              </p>
             </div>
-            <div id="feedback-output" class="content-box"></div>
-          </article>
 
-          <article class="result-block">
-            <div class="section-head">
-              <h2>Optimized Resume</h2>
-              <button class="copy-button" data-copy-target="optimized-output" type="button">Copy</button>
-            </div>
-            <div id="optimized-output" class="content-box"></div>
-          </article>
+            <div id="results" class="results hidden">
+              <article class="result-card score-card">
+                <div class="section-head">
+                  <h3>ATS Score</h3>
+                </div>
+                <div id="ats-output" class="score-value">--</div>
+              </article>
 
-          <article class="result-block">
-            <div class="section-head">
-              <h2>Interview Questions</h2>
-              <button class="copy-button" data-copy-target="questions-output" type="button">Copy</button>
-            </div>
-            <div id="questions-output" class="content-box"></div>
-          </article>
+              <article class="result-card score-card">
+                <div class="section-head">
+                  <h3>Technical Score</h3>
+                </div>
+                <div id="technical-output" class="score-value">--</div>
+              </article>
 
-          <article class="result-block">
-            <div class="section-head">
-              <h2>Suggested Answers</h2>
-              <button class="copy-button" data-copy-target="answers-output" type="button">Copy</button>
-            </div>
-            <div id="answers-output" class="content-box"></div>
-          </article>
+              <article class="result-card">
+                <div class="section-head">
+                  <h3>Matched Keywords</h3>
+                  <button class="copy-button" data-copy-target="matched-output" type="button">Copy</button>
+                </div>
+                <div id="matched-output" class="content-box"></div>
+              </article>
 
-          <article class="result-block">
-            <div class="section-head">
-              <h2>Skill Gaps</h2>
-              <button class="copy-button" data-copy-target="gaps-output" type="button">Copy</button>
+              <article class="result-card">
+                <div class="section-head">
+                  <h3>Missing Keywords</h3>
+                  <button class="copy-button" data-copy-target="missing-output" type="button">Copy</button>
+                </div>
+                <div id="missing-output" class="content-box"></div>
+              </article>
+
+              <article class="result-card">
+                <div class="section-head">
+                  <h3>Hard Filter Failures</h3>
+                  <button class="copy-button" data-copy-target="hard-filters-output" type="button">Copy</button>
+                </div>
+                <div id="hard-filters-output" class="content-box"></div>
+              </article>
+
+              <article class="result-card">
+                <div class="section-head">
+                  <h3>Weak Evidence Skills</h3>
+                  <button class="copy-button" data-copy-target="weak-evidence-output" type="button">Copy</button>
+                </div>
+                <div id="weak-evidence-output" class="content-box"></div>
+              </article>
+
+              <article class="result-card">
+                <div class="section-head">
+                  <h3>Final Verdict</h3>
+                  <button class="copy-button" data-copy-target="verdict-output" type="button">Copy</button>
+                </div>
+                <div id="verdict-output" class="content-box verdict-box"></div>
+              </article>
+
+              <article class="result-card full-width">
+                <div class="section-head">
+                  <h3>Evidence Notes</h3>
+                  <button class="copy-button" data-copy-target="evidence-output" type="button">Copy</button>
+                </div>
+                <div id="evidence-output" class="content-box"></div>
+              </article>
+
+              <article class="result-card full-width">
+                <div class="section-head">
+                  <h3>Risk Flags</h3>
+                  <button class="copy-button" data-copy-target="risks-output" type="button">Copy</button>
+                </div>
+                <div id="risks-output" class="content-box"></div>
+              </article>
+
+              <article class="result-card full-width">
+                <div class="section-head">
+                  <h3>Technical Questions</h3>
+                  <button class="copy-button" data-copy-target="technical-questions-output" type="button">Copy</button>
+                </div>
+                <div id="technical-questions-output" class="content-box"></div>
+              </article>
+
+              <article class="result-card full-width">
+                <div class="section-head">
+                  <h3>System Design Questions</h3>
+                  <button class="copy-button" data-copy-target="system-design-output" type="button">Copy</button>
+                </div>
+                <div id="system-design-output" class="content-box"></div>
+              </article>
+
+              <article class="result-card full-width">
+                <div class="section-head">
+                  <h3>Behavioral Questions</h3>
+                  <button class="copy-button" data-copy-target="behavioral-output" type="button">Copy</button>
+                </div>
+                <div id="behavioral-output" class="content-box"></div>
+              </article>
+
+              <article class="result-card full-width">
+                <div class="section-head">
+                  <h3>Mock Interview Simulation</h3>
+                  <button class="copy-button" data-copy-target="mock-output" type="button">Copy</button>
+                </div>
+                <div id="mock-output" class="content-box"></div>
+              </article>
+
+              <article class="result-card">
+                <div class="section-head">
+                  <h3>Top Rejection Reasons</h3>
+                  <button class="copy-button" data-copy-target="rejections-output" type="button">Copy</button>
+                </div>
+                <div id="rejections-output" class="content-box"></div>
+              </article>
+
+              <article class="result-card">
+                <div class="section-head">
+                  <h3>Top Strengths</h3>
+                  <button class="copy-button" data-copy-target="strengths-output" type="button">Copy</button>
+                </div>
+                <div id="strengths-output" class="content-box"></div>
+              </article>
+
+              <article class="result-card">
+                <div class="section-head">
+                  <h3>Confidence Score</h3>
+                </div>
+                <div id="confidence-output" class="score-value">--</div>
+              </article>
             </div>
-            <div id="gaps-output" class="content-box"></div>
-          </article>
+          </section>
         </section>
       </section>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <script src="/app.js"></script>
   </body>
 </html>
